@@ -1,13 +1,15 @@
-<template>
-  <div><br>
-    <v-container>
+<template><br>
+  <div>
+    <v-container fluid>
       <h2>Your Favorite Radios</h2><br>
-      <v-row>
+      <v-row justify="center">
         <v-col cols="12" sm="6" md="4" lg="3" v-for="radio in favoriteRadios" :key="radio.id">
           <v-card class="d-flex flex-row card" flat tile @mouseenter="showControls(radio)"
             @mouseleave="hideControls(radio)">
             <v-img :src="radio.favicon || defaultImage" class="card-image" :alt="radio.name" />
-            <v-card-title class="flex-grow-1">{{ radio.name }}</v-card-title>
+            <div class="title-container">
+              <v-card-title class="flex-grow-1">{{ radio.name }}</v-card-title>
+            </div>
             <div v-if="radio.showControls" class="controls">
               <v-btn @click="togglePlayPause(radio)" :color="radio.playing ? 'error' : 'primary'" small>
                 {{ radio.playing ? 'Pause' : 'Play' }}
@@ -29,6 +31,7 @@
   </div>
 </template>
 
+
 <script>
 import Hls from 'hls.js';
 import defaultImage from '../assets/images (2).jpeg';
@@ -47,7 +50,7 @@ export default {
       const data = await response.json();
       const allRadios = data.filter(radio => radio.countrycode === 'IT').map(radio => ({
         ...radio,
-        favorite: true, 
+        favorite: true,
         showControls: false,
         playing: false,
         audioPlayer: new Audio(),
@@ -67,7 +70,7 @@ export default {
       if (radio.playing) {
         this.pauseRadio(radio);
       } else {
-        this.pauseAllRadios(); 
+        this.pauseAllRadios();
         this.playRadio(radio);
       }
     },
@@ -114,7 +117,7 @@ export default {
       let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
       favorites = favorites.filter(fav => fav.changeuuid !== radio.changeuuid);
       localStorage.setItem('favorites', JSON.stringify(favorites));
-      this.getFavoriteRadios(); 
+      this.getFavoriteRadios();
     },
     showControls(radio) {
       radio.showControls = true;
@@ -168,13 +171,7 @@ h1 {
   justify-content: space-around;
 }
 
-.card {
-  max-width: 400px;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-  transition: transform 0.3s;
-  border-radius: 5px;
-  position: relative;
-}
+
 
 .card:hover {
   transform: scale(1.05);
@@ -199,11 +196,17 @@ h1 {
   font-weight: bold;
 }
 
+.card-content {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
 .controls {
   position: absolute;
   bottom: 10px;
-  left: 160px;
-  /* Changed from 'right' to 'left' */
+  right: 10px;
+  /* Adjust this if necessary */
   display: flex;
   align-items: center;
 }
@@ -246,6 +249,24 @@ h1 {
 
 .bar:nth-child(4) {
   animation-delay: 0.3s;
+}
+
+.title-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%; /* Change this to adjust width */
+  height: 100%; /* Add this to ensure the container takes up full height */
+}
+
+.card {
+  max-width: 400px;
+  width: 100%; /* Add this to ensure the card takes up full width */
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
+  transition: transform 0.3s;
+  border-radius: 5px;
+  position: relative;
+  
 }
 
 @keyframes pulse {

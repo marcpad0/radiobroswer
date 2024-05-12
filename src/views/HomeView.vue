@@ -1,5 +1,5 @@
 <template><br>
-  <v-container>
+  <v-container fluid>
     <h1>Homepage</h1>
     <v-row justify="center">
       <v-col cols="12" sm="6" md="4" lg="3" v-for="radio in radios" :key="radio.id">
@@ -151,6 +151,7 @@ export default {
   padding: 20px;
 }
 
+
 .heart-container {
   display: inline-block;
   cursor: pointer;
@@ -180,13 +181,7 @@ h1 {
   justify-content: space-around;
 }
 
-.card {
-  max-width: 400px;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-  transition: transform 0.3s;
-  border-radius: 5px;
-  position: relative;
-}
+
 
 .card:hover {
   transform: scale(1.05);
@@ -271,6 +266,20 @@ h1 {
   justify-content: center;
   align-items: flex-start;
   width: 100%;
+  /* Change this to adjust width */
+  height: 100%;
+  /* Add this to ensure the container takes up full height */
+}
+
+.card {
+  max-width: 400px;
+  width: 100%;
+  /* Add this to ensure the card takes up full width */
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
+  transition: transform 0.3s;
+  border-radius: 5px;
+  position: relative;
+
 }
 
 @keyframes pulse {
