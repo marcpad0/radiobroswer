@@ -1,6 +1,5 @@
 <template>
   <div><br>
-    <h1>Favorite </h1>
     <v-container>
       <h2>Your Favorite Radios</h2><br>
       <v-row>

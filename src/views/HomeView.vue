@@ -1,4 +1,4 @@
-<template>
+<template><br>
   <v-container>
     <h1>Homepage</h1>
     <v-row justify="center">
@@ -6,7 +6,9 @@
         <v-card class="d-flex flex-row card" flat tile @mouseenter="showControls(radio)"
           @mouseleave="hideControls(radio)">
           <v-img :src="radio.favicon || defaultImage" class="card-image" :alt="radio.name" />
-          <v-card-title class="flex-grow-1">{{ radio.name }}</v-card-title>
+          <div class="title-container">
+            <v-card-title class="flex-grow-1">{{ radio.name }}</v-card-title>
+          </div>
           <div v-if="radio.showControls" class="controls">
             <v-btn @click="togglePlayPause(radio)" :color="radio.playing ? 'error' : 'primary'" small>
               {{ radio.playing ? 'Pause' : 'Play' }}
@@ -70,7 +72,7 @@ export default {
       if (radio.playing) {
         this.pauseRadio(radio);
       } else {
-        this.pauseAllRadios(); 
+        this.pauseAllRadios();
         this.playRadio(radio);
       }
     },
@@ -209,11 +211,17 @@ h1 {
   font-weight: bold;
 }
 
+.card-content {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
 .controls {
   position: absolute;
   bottom: 10px;
-  left: 160px;
-  /* Changed from 'right' to 'left' */
+  right: 10px;
+  /* Adjust this if necessary */
   display: flex;
   align-items: center;
 }
@@ -256,6 +264,13 @@ h1 {
 
 .bar:nth-child(4) {
   animation-delay: 0.3s;
+}
+
+.title-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
 }
 
 @keyframes pulse {

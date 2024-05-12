@@ -3,7 +3,8 @@
     <div class="navbar" v-if="selectedRadio">
         <img :src="selectedRadio.favicon || defaultImage" class="radio-logo" alt="Radio logo">
         <h4>{{ selectedRadio.name }}</h4>
-        <button @click="togglePlayPause(selectedRadio)">{{ selectedRadio.playing ? 'Pause' : 'Play' }}</button>
+        <button @click="togglePlayPause(selectedRadio, $event)" @touchstart="togglePlayPause(selectedRadio, $event)">{{
+            selectedRadio.playing ? 'Pause' : 'Play' }}</button>
         <div v-if="selectedRadio.playing" class="sound-wave">
             <div class="bar"></div>
             <div class="bar"></div>
@@ -44,12 +45,13 @@ export default {
         window.addEventListener('resize', this.handleWindowResize);
         this.raycaster = new THREE.Raycaster();
         this.mouse = new THREE.Vector2();
-        window.addEventListener('click', this.onDocumentMouseClick);
-
+        window.addEventListener('click', this.handleInteraction);
+        window.addEventListener('touchend', this.handleInteraction);
     },
     beforeUnmount() {
         window.removeEventListener('resize', this.handleWindowResize);
-        window.removeEventListener('click', this.onDocumentMouseClick);
+        window.removeEventListener('click', this.handleInteraction);
+        window.removeEventListener('touchend', this.handleInteraction);
         this.pauseAllRadios();
     },
     methods: {
@@ -81,16 +83,35 @@ export default {
 
             this.scene = scene;
         },
-        onDocumentMouseClick(event) {
-            event.preventDefault();
-            this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-            this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-            this.raycaster.setFromCamera(this.mouse, this.camera);
-            const intersects = this.raycaster.intersectObjects(this.scene.children);
+        handleInteraction(event) {
+            event.stopPropagation(); // Stop event propagation
 
-            if (intersects.length > 0) {
-                console.log('Clicked on:', intersects[0].object.userData);
-                this.handleMarkerClick(intersects[0]);
+            if (this.$refs.container.contains(event.target)) {
+                // Prevent default behavior only if the event target is inside the 3D scene container
+                event.preventDefault();
+
+                let clientX, clientY;
+                if (event.type.startsWith('touch')) {
+                    clientX = event.changedTouches[0].clientX;
+                    clientY = event.changedTouches[0].clientY;
+                    console.log("Touch coordinates:", clientX, clientY);
+                } else {
+                    clientX = event.clientX;
+                    clientY = event.clientY;
+                    console.log("Click coordinates:", clientX, clientY);
+                }
+
+                this.mouse.x = (clientX / window.innerWidth) * 2 - 1;
+                this.mouse.y = -(clientY / window.innerHeight) * 2 + 1;
+                this.raycaster.setFromCamera(this.mouse, this.camera);
+                const intersects = this.raycaster.intersectObjects(this.scene.children, true);
+
+                if (intersects.length > 0) {
+                    console.log('Object intersected:', intersects[0].object.userData);
+                    this.handleMarkerClick(intersects[0]);
+                } else {
+                    console.log('No intersections found.');
+                }
             }
         },
         handleMarkerClick(intersectedObject) {
@@ -189,11 +210,14 @@ export default {
                 console.error('Error fetching radios:', error);
             }
         },
-        togglePlayPause(radio) {
+        togglePlayPause(radio, event) {
+            event.preventDefault();
+            event.stopPropagation();
+
             if (radio.playing) {
                 this.pauseRadio(radio);
             } else {
-                this.pauseAllRadios(); // Pause all other radios
+                this.pauseAllRadios();
                 this.playRadio(radio);
             }
         },
