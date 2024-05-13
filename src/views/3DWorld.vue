@@ -193,7 +193,7 @@ export default {
             this.renderer.setSize(window.innerWidth, window.innerHeight);
         },
         async fetchRadios() {
-            const response = await fetch('https://nl1.api.radio-browser.info/json/stations/search?limit=100&countrycode=IT&hidebroken=true&order=clickcount&reverse=true');
+            const response = await fetch('https://nl1.api.radio-browser.info/json/stations/search?limit=500&hidebroken=true&order=clickcount&reverse=true');
             const data = await response.json();
             return data;
         },
